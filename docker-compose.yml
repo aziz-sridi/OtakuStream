@@ -1,0 +1,116 @@
+services:
+  kafka:
+    image: apache/kafka:latest
+    container_name: otaku-kafka
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    container_name: otaku-auth
+    environment:
+      GRPC_PORT: 50051
+      KAFKA_BROKERS: kafka:9092
+      JWT_SECRET: dev-secret-change-me
+    ports:
+      - "50051:50051"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  catalog-service:
+    build:
+      context: .
+      dockerfile: services/catalog-service/Dockerfile
+    container_name: otaku-catalog
+    environment:
+      GRPC_PORT: 50052
+      KAFKA_BROKERS: kafka:9092
+    ports:
+      - "50052:50052"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  watchlist-service:
+    build:
+      context: .
+      dockerfile: services/watchlist-service/Dockerfile
+    container_name: otaku-watchlist
+    environment:
+      GRPC_PORT: 50053
+      KAFKA_BROKERS: kafka:9092
+    ports:
+      - "50053:50053"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  review-service:
+    build:
+      context: .
+      dockerfile: services/review-service/Dockerfile
+    container_name: otaku-review
+    environment:
+      GRPC_PORT: 50054
+      KAFKA_BROKERS: kafka:9092
+    ports:
+      - "50054:50054"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    container_name: otaku-notification
+    environment:
+      GRPC_PORT: 50055
+      KAFKA_BROKERS: kafka:9092
+    ports:
+      - "50055:50055"
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: otaku-gateway
+    environment:
+      PORT: 4000
+      JWT_SECRET: dev-secret-change-me
+      AUTH_GRPC: auth-service:50051
+      CATALOG_GRPC: catalog-service:50052
+      WATCHLIST_GRPC: watchlist-service:50053
+      REVIEW_GRPC: review-service:50054
+      NOTIFICATION_GRPC: notification-service:50055
+    ports:
+      - "4000:4000"
+    depends_on:
+      - auth-service
+      - catalog-service
+      - watchlist-service
+      - review-service
+      - notification-service
