@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package review;
+
+service ReviewService {
+  rpc CreateReview (CreateReviewRequest) returns (Review);
+  rpc GetReviews (GetReviewsRequest) returns (ReviewList);
+  rpc LikeReview (LikeRequest) returns (Review);
+  rpc DeleteReview (ReviewIdRequest) returns (Empty);
+}
+
+message CreateReviewRequest {
+  string user_id = 1;
+  string anime_id = 2;
+  int32 rating = 3;
+  string body = 4;
+}
+
+message GetReviewsRequest {
+  string anime_id = 1;
+  int32 limit = 2;
+}
+
+message LikeRequest {
+  string review_id = 1;
+  string user_id = 2;
+}
+
+message ReviewIdRequest {
+  string review_id = 1;
+}
+
+message Review {
+  string id = 1;
+  string user_id = 2;
+  string anime_id = 3;
+  int32 rating = 4;
+  string body = 5;
+  int32 likes = 6;
+  string created_at = 7;
+}
+
+message ReviewList {
+  repeated Review items = 1;
+}
+
+message Empty {}
