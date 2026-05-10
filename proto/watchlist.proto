@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package watchlist;
+
+service WatchlistService {
+  rpc AddToWatchlist (WatchlistRequest) returns (WatchlistEntry);
+  rpc RemoveFromWatchlist (WatchlistRequest) returns (Empty);
+  rpc GetWatchlist (UserIdRequest) returns (WatchlistEntries);
+  rpc UpdateProgress (ProgressRequest) returns (Progress);
+  rpc GetProgress (ProgressQuery) returns (Progress);
+}
+
+message WatchlistRequest {
+  string user_id = 1;
+  string anime_id = 2;
+}
+
+message UserIdRequest {
+  string user_id = 1;
+}
+
+message ProgressRequest {
+  string user_id = 1;
+  string anime_id = 2;
+  string episode_id = 3;
+  int32 position_seconds = 4;
+  bool completed = 5;
+}
+
+message ProgressQuery {
+  string user_id = 1;
+  string anime_id = 2;
+}
+
+message WatchlistEntry {
+  string user_id = 1;
+  string anime_id = 2;
+  string added_at = 3;
+  string status = 4;
+}
+
+message WatchlistEntries {
+  repeated WatchlistEntry items = 1;
+}
+
+message Progress {
+  string user_id = 1;
+  string anime_id = 2;
+  string episode_id = 3;
+  int32 position_seconds = 4;
+  bool completed = 5;
+  string updated_at = 6;
+}
+
+message Empty {}
