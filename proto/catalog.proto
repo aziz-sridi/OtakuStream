@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package catalog;
+
+service CatalogService {
+  rpc ListAnime (ListAnimeRequest) returns (AnimeList);
+  rpc GetAnime (AnimeIdRequest) returns (Anime);
+  rpc SearchAnime (SearchRequest) returns (AnimeList);
+  rpc GetEpisodes (AnimeIdRequest) returns (EpisodeList);
+  rpc CreateAnime (CreateAnimeRequest) returns (Anime);
+  rpc PublishEpisode (PublishEpisodeRequest) returns (Episode);
+}
+
+message ListAnimeRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  string genre = 3;
+}
+
+message AnimeIdRequest {
+  string anime_id = 1;
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 limit = 2;
+}
+
+message CreateAnimeRequest {
+  string title = 1;
+  string description = 2;
+  string cover_url = 3;
+  repeated string genres = 4;
+}
+
+message PublishEpisodeRequest {
+  string anime_id = 1;
+  int32 number = 2;
+  string title = 3;
+  int32 duration_seconds = 4;
+}
+
+message Anime {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string cover_url = 4;
+  repeated string genres = 5;
+  int32 episode_count = 6;
+  double rating = 7;
+}
+
+message Episode {
+  string id = 1;
+  string anime_id = 2;
+  int32 number = 3;
+  string title = 4;
+  int32 duration_seconds = 5;
+  string published_at = 6;
+}
+
+message AnimeList {
+  repeated Anime items = 1;
+  int32 total = 2;
+}
+
+message EpisodeList {
+  repeated Episode items = 1;
+}
