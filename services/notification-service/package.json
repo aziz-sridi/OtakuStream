@@ -1,0 +1,17 @@
+{
+  "name": "notification-service",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.10.6",
+    "@grpc/proto-loader": "^0.7.13",
+    "kafkajs": "^2.2.4",
+    "rxdb": "^15.39.0",
+    "rxjs": "^7.8.1",
+    "uuid": "^9.0.1"
+  }
+}
