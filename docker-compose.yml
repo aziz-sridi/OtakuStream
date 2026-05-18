@@ -31,6 +31,8 @@ services:
       GRPC_PORT: 50051
       KAFKA_BROKERS: kafka:9092
       JWT_SECRET: dev-secret-change-me
+    volumes:
+      - auth-data:/app/data
     ports:
       - "50051:50051"
     depends_on:
@@ -114,3 +116,6 @@ services:
       - watchlist-service
       - review-service
       - notification-service
+
+volumes:
+  auth-data:

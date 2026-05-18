@@ -14,9 +14,14 @@ function handle(promise, res, status = 200) {
 router.post('/auth/register', (req, res) => handle(clients.auth.Register(req.body), res, 201));
 router.post('/auth/login', (req, res) => handle(clients.auth.Login(req.body), res));
 router.get('/auth/me', authMiddleware, (req, res) =>
-  handle(clients.auth.GetUserProfile({ user_id: req.user.id }), res));
+  handle(clients.auth.GetUserProfile({ userId: req.user.id }), res));
 router.patch('/auth/me', authMiddleware, (req, res) =>
-  handle(clients.auth.UpdateProfile({ user_id: req.user.id, ...req.body }), res));
+  handle(clients.auth.UpdateProfile({
+    userId: req.user.id,
+    username: req.body.username,
+    avatarUrl: req.body.avatar_url,
+    bio: req.body.bio,
+  }), res));
 
 // --- Catalog ---
 router.get('/anime', (req, res) =>

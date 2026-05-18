@@ -13,9 +13,9 @@ function toProfile(row) {
     id: row.id,
     username: row.username,
     email: row.email,
-    avatar_url: row.avatar_url || '',
+    avatarUrl: row.avatar_url || '',
     bio: row.bio || '',
-    created_at: row.created_at,
+    createdAt: row.created_at,
   };
 }
 
@@ -64,25 +64,25 @@ module.exports = {
   ValidateToken(call, cb) {
     try {
       const decoded = jwt.verify(call.request.token, JWT_SECRET);
-      cb(null, { valid: true, user_id: decoded.sub, username: decoded.username });
+      cb(null, { valid: true, userId: decoded.sub, username: decoded.username });
     } catch {
-      cb(null, { valid: false, user_id: '', username: '' });
+      cb(null, { valid: false, userId: '', username: '' });
     }
   },
 
   GetUserProfile(call, cb) {
-    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(call.request.user_id);
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(call.request.userId);
     if (!user) return cb({ code: grpc.status.NOT_FOUND, message: 'user not found' });
     cb(null, toProfile(user));
   },
 
   UpdateProfile(call, cb) {
-    const { user_id, username, avatar_url, bio } = call.request;
-    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(user_id);
+    const { userId, username, avatarUrl, bio } = call.request;
+    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
     if (!user) return cb({ code: grpc.status.NOT_FOUND, message: 'user not found' });
     db.prepare('UPDATE users SET username = COALESCE(NULLIF(?, ""), username), avatar_url = ?, bio = ? WHERE id = ?')
-      .run(username || '', avatar_url || '', bio || '', user_id);
-    const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(user_id);
+      .run(username || '', avatarUrl || '', bio || '', userId);
+    const updated = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
     cb(null, toProfile(updated));
   },
 };
