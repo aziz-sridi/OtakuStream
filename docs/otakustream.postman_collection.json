@@ -1,0 +1,476 @@
+{
+  "info": {
+    "name": "OtakuStream API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  const data = pm.response.json();",
+                  "  if (data && data.token) {",
+                  "    pm.collectionVariables.set(\"token\", data.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice\",\n  \"email\": \"alice@example.com\",\n  \"password\": \"pw\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/register",
+              "host": ["http://localhost:4000/api"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "POST /auth/login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data && data.token) {",
+                  "    pm.collectionVariables.set(\"token\", data.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice@example.com\",\n  \"password\": \"pw\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/login",
+              "host": ["http://localhost:4000/api"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "GET /auth/me",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/auth/me",
+              "host": ["http://localhost:4000/api"],
+              "path": ["auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "PATCH /auth/me",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alice2\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"bio\": \"Anime fan\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/me",
+              "host": ["http://localhost:4000/api"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "GET /anime",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:4000/api/anime?limit=10&offset=0&genre=",
+              "host": ["http://localhost:4000/api"],
+              "path": ["anime"],
+              "query": [
+                { "key": "limit", "value": "10" },
+                { "key": "offset", "value": "0" },
+                { "key": "genre", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /anime/search",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:4000/api/anime/search?q=naruto&limit=5",
+              "host": ["http://localhost:4000/api"],
+              "path": ["anime", "search"],
+              "query": [
+                { "key": "q", "value": "naruto" },
+                { "key": "limit", "value": "5" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /anime/:id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:4000/api/anime/{{animeId}}",
+              "host": ["http://localhost:4000/api"],
+              "path": ["anime", "{{animeId}}"]
+            }
+          }
+        },
+        {
+          "name": "GET /anime/:id/episodes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:4000/api/anime/{{animeId}}/episodes",
+              "host": ["http://localhost:4000/api"],
+              "path": ["anime", "{{animeId}}", "episodes"]
+            }
+          }
+        },
+        {
+          "name": "POST /admin/anime",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Demo Anime\",\n  \"description\": \"Test description\",\n  \"cover_url\": \"https://example.com/cover.png\",\n  \"genres\": [\"action\", \"adventure\"]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/anime",
+              "host": ["http://localhost:4000/api"],
+              "path": ["admin", "anime"]
+            }
+          }
+        },
+        {
+          "name": "POST /admin/episodes",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"anime_id\": \"{{animeId}}\",\n  \"number\": 1,\n  \"title\": \"Episode 1\",\n  \"duration_seconds\": 1440\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/episodes",
+              "host": ["http://localhost:4000/api"],
+              "path": ["admin", "episodes"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Watchlist",
+      "item": [
+        {
+          "name": "GET /watchlist",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/watchlist",
+              "host": ["http://localhost:4000/api"],
+              "path": ["watchlist"]
+            }
+          }
+        },
+        {
+          "name": "POST /watchlist",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"anime_id\": \"{{animeId}}\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/watchlist",
+              "host": ["http://localhost:4000/api"],
+              "path": ["watchlist"]
+            }
+          }
+        },
+        {
+          "name": "DELETE /watchlist/:animeId",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/watchlist/{{animeId}}",
+              "host": ["http://localhost:4000/api"],
+              "path": ["watchlist", "{{animeId}}"]
+            }
+          }
+        },
+        {
+          "name": "PATCH /watchlist/progress",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"anime_id\": \"{{animeId}}\",\n  \"episode_id\": \"{{episodeId}}\",\n  \"position_seconds\": 120,\n  \"completed\": false\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/watchlist/progress",
+              "host": ["http://localhost:4000/api"],
+              "path": ["watchlist", "progress"]
+            }
+          }
+        },
+        {
+          "name": "GET /watchlist/progress/:animeId",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/watchlist/progress/{{animeId}}",
+              "host": ["http://localhost:4000/api"],
+              "path": ["watchlist", "progress", "{{animeId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reviews",
+      "item": [
+        {
+          "name": "GET /anime/:id/reviews",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:4000/api/anime/{{animeId}}/reviews?limit=10",
+              "host": ["http://localhost:4000/api"],
+              "path": ["anime", "{{animeId}}", "reviews"],
+              "query": [
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /reviews",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"anime_id\": \"{{animeId}}\",\n  \"rating\": 5,\n  \"body\": \"Great show!\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/reviews",
+              "host": ["http://localhost:4000/api"],
+              "path": ["reviews"]
+            }
+          }
+        },
+        {
+          "name": "POST /reviews/:id/like",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/reviews/{{reviewId}}/like",
+              "host": ["http://localhost:4000/api"],
+              "path": ["reviews", "{{reviewId}}", "like"]
+            }
+          }
+        },
+        {
+          "name": "DELETE /reviews/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/reviews/{{reviewId}}",
+              "host": ["http://localhost:4000/api"],
+              "path": ["reviews", "{{reviewId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "GET /notifications",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/notifications?limit=10",
+              "host": ["http://localhost:4000/api"],
+              "path": ["notifications"],
+              "query": [
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /notifications/:id/read",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/notifications/{{notificationId}}/read",
+              "host": ["http://localhost:4000/api"],
+              "path": ["notifications", "{{notificationId}}", "read"]
+            }
+          }
+        },
+        {
+          "name": "DELETE /notifications/:id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/notifications/{{notificationId}}",
+              "host": ["http://localhost:4000/api"],
+              "path": ["notifications", "{{notificationId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphQL",
+      "item": [
+        {
+          "name": "POST /graphql (browse anime)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ anime(limit: 5) { id title rating } }\"\n}"
+            },
+            "url": {
+              "raw": "{{graphqlUrl}}",
+              "host": ["{{graphqlUrl}}"]
+            }
+          }
+        },
+        {
+          "name": "POST /graphql (my watchlist)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"{ myWatchlist { animeId status anime { title rating episodeCount } } }\"\n}"
+            },
+            "url": {
+              "raw": "{{graphqlUrl}}",
+              "host": ["{{graphqlUrl}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "graphqlUrl", "value": "{{baseUrl}}/graphql" },
+    { "key": "token", "value": "" },
+    { "key": "animeId", "value": "1" },
+    { "key": "episodeId", "value": "1" },
+    { "key": "reviewId", "value": "1" },
+    { "key": "notificationId", "value": "1" }
+  ]
+}
