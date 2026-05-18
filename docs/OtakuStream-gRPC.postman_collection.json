@@ -1,0 +1,311 @@
+{
+  "info": {
+    "name": "OtakuStream gRPC",
+    "_postman_id": "otakustream-grpc-collection",
+    "description": "gRPC requests for all OtakuStream microservices: Auth (50051), Catalog (50052), Watchlist (50053), Review (50054), Notification (50055)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth Service (localhost:50051)",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50051/auth.AuthService/Register",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50051/auth.AuthService/Login",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ValidateToken",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50051/auth.AuthService/ValidateToken",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"token\": \"<paste_jwt_token_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetUserProfile",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50051/auth.AuthService/GetUserProfile",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateProfile",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50051/auth.AuthService/UpdateProfile",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"username\": \"newname\",\n  \"avatar_url\": \"https://example.com/avatar.png\",\n  \"bio\": \"Anime lover\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catalog Service (localhost:50052)",
+      "item": [
+        {
+          "name": "ListAnime",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50052/catalog.CatalogService/ListAnime",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"limit\": 20,\n  \"offset\": 0,\n  \"genre\": \"\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetAnime",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50052/catalog.CatalogService/GetAnime",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"anime_id\": \"<anime_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "SearchAnime",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50052/catalog.CatalogService/SearchAnime",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"query\": \"naruto\",\n  \"limit\": 10\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetEpisodes",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50052/catalog.CatalogService/GetEpisodes",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"anime_id\": \"<anime_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CreateAnime",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50052/catalog.CatalogService/CreateAnime",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"title\": \"Attack on Titan\",\n  \"description\": \"Humans fight against giant humanoid creatures.\",\n  \"cover_url\": \"https://example.com/aot.jpg\",\n  \"genres\": [\"Action\", \"Drama\", \"Fantasy\"]\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PublishEpisode",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50052/catalog.CatalogService/PublishEpisode",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"anime_id\": \"<anime_id_here>\",\n  \"number\": 1,\n  \"title\": \"To You, in 2000 Years\",\n  \"duration_seconds\": 1440\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Watchlist Service (localhost:50053)",
+      "item": [
+        {
+          "name": "GetWatchlist",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50053/watchlist.WatchlistService/GetWatchlist",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "AddToWatchlist",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50053/watchlist.WatchlistService/AddToWatchlist",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"anime_id\": \"<anime_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "RemoveFromWatchlist",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50053/watchlist.WatchlistService/RemoveFromWatchlist",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"anime_id\": \"<anime_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UpdateProgress",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50053/watchlist.WatchlistService/UpdateProgress",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"anime_id\": \"<anime_id_here>\",\n  \"episode_id\": \"<episode_id_here>\",\n  \"position_seconds\": 300,\n  \"completed\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetProgress",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50053/watchlist.WatchlistService/GetProgress",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"anime_id\": \"<anime_id_here>\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Review Service (localhost:50054)",
+      "item": [
+        {
+          "name": "GetReviews",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50054/review.ReviewService/GetReviews",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"anime_id\": \"<anime_id_here>\",\n  \"limit\": 50\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "CreateReview",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50054/review.ReviewService/CreateReview",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"anime_id\": \"<anime_id_here>\",\n  \"rating\": 9,\n  \"body\": \"Absolutely amazing anime, highly recommended!\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "LikeReview",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50054/review.ReviewService/LikeReview",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"review_id\": \"<review_id_here>\",\n  \"user_id\": \"<user_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteReview",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50054/review.ReviewService/DeleteReview",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"review_id\": \"<review_id_here>\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notification Service (localhost:50055)",
+      "item": [
+        {
+          "name": "GetNotifications",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50055/notification.NotificationService/GetNotifications",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"user_id\": \"<user_id_here>\",\n  \"limit\": 50\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "MarkAsRead",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50055/notification.NotificationService/MarkAsRead",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"id\": \"<notification_id_here>\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DeleteNotification",
+          "request": {
+            "method": "GRPC",
+            "url": "grpc://localhost:50055/notification.NotificationService/DeleteNotification",
+            "body": {
+              "mode": "grpc",
+              "raw": "{\n  \"id\": \"<notification_id_here>\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
