@@ -27,8 +27,8 @@ async function main() {
         const token = header.startsWith('Bearer ') ? header.slice(7) : null;
         if (!token) return {};
         try {
-          const { valid, user_id, username } = await clients.auth.ValidateToken({ token });
-          return valid ? { user: { id: user_id, username } } : {};
+          const { valid, userId, username } = await clients.auth.ValidateToken({ token });
+          return valid ? { user: { id: userId, username } } : {};
         } catch { return {}; }
       },
     })

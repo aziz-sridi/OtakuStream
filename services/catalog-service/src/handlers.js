@@ -9,10 +9,10 @@ function rowToAnime(row) {
     id: row.id,
     title: row.title,
     description: row.description || '',
-    cover_url: row.cover_url || '',
+    coverUrl: row.cover_url || '',
     genres: JSON.parse(row.genres || '[]'),
     rating: row.rating || 0,
-    episode_count: epCount,
+    episodeCount: epCount,
   };
 }
 
@@ -31,7 +31,7 @@ module.exports = {
   },
 
   GetAnime(call, cb) {
-    const row = db.prepare('SELECT * FROM anime WHERE id = ?').get(call.request.anime_id);
+    const row = db.prepare('SELECT * FROM anime WHERE id = ?').get(call.request.animeId);
     if (!row) return cb({ code: grpc.status.NOT_FOUND, message: 'anime not found' });
     cb(null, rowToAnime(row));
   },
@@ -45,39 +45,39 @@ module.exports = {
 
   GetEpisodes(call, cb) {
     const rows = db.prepare('SELECT * FROM episodes WHERE anime_id = ? ORDER BY number ASC')
-      .all(call.request.anime_id);
+      .all(call.request.animeId);
     cb(null, {
       items: rows.map((r) => ({
         id: r.id,
-        anime_id: r.anime_id,
+        animeId: r.anime_id,
         number: r.number,
         title: r.title,
-        duration_seconds: r.duration_seconds,
-        published_at: r.published_at,
+        durationSeconds: r.duration_seconds,
+        publishedAt: r.published_at,
       })),
     });
   },
 
   CreateAnime(call, cb) {
-    const { title, description = '', cover_url = '', genres = [] } = call.request;
+    const { title, description = '', coverUrl = '', genres = [] } = call.request;
     if (!title) return cb({ code: grpc.status.INVALID_ARGUMENT, message: 'title required' });
     const id = uuid();
     const now = new Date().toISOString();
     db.prepare('INSERT INTO anime (id, title, description, cover_url, genres, rating, created_at) VALUES (?, ?, ?, ?, ?, 0, ?)')
-      .run(id, title, description, cover_url, JSON.stringify(genres), now);
+      .run(id, title, description, coverUrl, JSON.stringify(genres), now);
     const row = db.prepare('SELECT * FROM anime WHERE id = ?').get(id);
     cb(null, rowToAnime(row));
   },
 
   async PublishEpisode(call, cb) {
-    const { anime_id, number, title, duration_seconds = 0 } = call.request;
-    const anime = db.prepare('SELECT * FROM anime WHERE id = ?').get(anime_id);
+    const { animeId, number, title, durationSeconds = 0 } = call.request;
+    const anime = db.prepare('SELECT * FROM anime WHERE id = ?').get(animeId);
     if (!anime) return cb({ code: grpc.status.NOT_FOUND, message: 'anime not found' });
     const id = uuid();
     const now = new Date().toISOString();
     db.prepare('INSERT INTO episodes (id, anime_id, number, title, duration_seconds, published_at) VALUES (?, ?, ?, ?, ?, ?)')
-      .run(id, anime_id, number, title, duration_seconds, now);
-    await publish('episode.published', { episode_id: id, anime_id, anime_title: anime.title, number, title, published_at: now });
-    cb(null, { id, anime_id, number, title, duration_seconds, published_at: now });
+      .run(id, animeId, number, title, durationSeconds, now);
+    await publish('episode.published', { episode_id: id, anime_id: animeId, anime_title: anime.title, number, title, published_at: now });
+    cb(null, { id, animeId, number, title, durationSeconds, publishedAt: now });
   },
 };

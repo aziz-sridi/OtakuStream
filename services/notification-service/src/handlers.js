@@ -4,22 +4,22 @@ const { db } = require('./db');
 function toNotif(doc) {
   return {
     id: doc.id,
-    user_id: doc.user_id,
+    userId: doc.user_id,
     type: doc.type,
     title: doc.title,
     body: doc.body,
     read: !!doc.read,
-    created_at: doc.created_at,
+    createdAt: doc.created_at,
   };
 }
 
 module.exports = {
   async GetNotifications(call, cb) {
     try {
-      const { user_id, limit = 50 } = call.request;
+      const { userId, limit = 50 } = call.request;
       const instance = await db;
       const docs = await instance.notifications.find({
-        selector: { user_id },
+        selector: { user_id: userId },
         sort: [{ created_at: 'desc' }],
         limit: limit || 50,
       }).exec();

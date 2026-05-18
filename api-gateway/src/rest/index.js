@@ -33,39 +33,60 @@ router.get('/anime', (req, res) =>
 router.get('/anime/search', (req, res) =>
   handle(clients.catalog.SearchAnime({ query: req.query.q || '', limit: parseInt(req.query.limit) || 20 }), res));
 router.get('/anime/:id', (req, res) =>
-  handle(clients.catalog.GetAnime({ anime_id: req.params.id }), res));
+  handle(clients.catalog.GetAnime({ animeId: req.params.id }), res));
 router.get('/anime/:id/episodes', (req, res) =>
-  handle(clients.catalog.GetEpisodes({ anime_id: req.params.id }), res));
+  handle(clients.catalog.GetEpisodes({ animeId: req.params.id }), res));
 router.post('/admin/anime', authMiddleware, (req, res) =>
-  handle(clients.catalog.CreateAnime(req.body), res, 201));
+  handle(clients.catalog.CreateAnime({
+    title: req.body.title,
+    description: req.body.description,
+    coverUrl: req.body.cover_url,
+    genres: req.body.genres,
+  }), res, 201));
 router.post('/admin/episodes', authMiddleware, (req, res) =>
-  handle(clients.catalog.PublishEpisode(req.body), res, 201));
+  handle(clients.catalog.PublishEpisode({
+    animeId: req.body.anime_id,
+    number: req.body.number,
+    title: req.body.title,
+    durationSeconds: req.body.duration_seconds,
+  }), res, 201));
 
 // --- Watchlist ---
 router.get('/watchlist', authMiddleware, (req, res) =>
-  handle(clients.watchlist.GetWatchlist({ user_id: req.user.id }), res));
+  handle(clients.watchlist.GetWatchlist({ userId: req.user.id }), res));
 router.post('/watchlist', authMiddleware, (req, res) =>
-  handle(clients.watchlist.AddToWatchlist({ user_id: req.user.id, anime_id: req.body.anime_id }), res, 201));
+  handle(clients.watchlist.AddToWatchlist({ userId: req.user.id, animeId: req.body.anime_id }), res, 201));
 router.delete('/watchlist/:animeId', authMiddleware, (req, res) =>
-  handle(clients.watchlist.RemoveFromWatchlist({ user_id: req.user.id, anime_id: req.params.animeId }), res, 204));
+  handle(clients.watchlist.RemoveFromWatchlist({ userId: req.user.id, animeId: req.params.animeId }), res, 204));
 router.patch('/watchlist/progress', authMiddleware, (req, res) =>
-  handle(clients.watchlist.UpdateProgress({ user_id: req.user.id, ...req.body }), res));
+  handle(clients.watchlist.UpdateProgress({
+    userId: req.user.id,
+    animeId: req.body.anime_id,
+    episodeId: req.body.episode_id,
+    positionSeconds: req.body.position_seconds,
+    completed: req.body.completed,
+  }), res));
 router.get('/watchlist/progress/:animeId', authMiddleware, (req, res) =>
-  handle(clients.watchlist.GetProgress({ user_id: req.user.id, anime_id: req.params.animeId }), res));
+  handle(clients.watchlist.GetProgress({ userId: req.user.id, animeId: req.params.animeId }), res));
 
 // --- Reviews ---
 router.get('/anime/:id/reviews', (req, res) =>
-  handle(clients.review.GetReviews({ anime_id: req.params.id, limit: parseInt(req.query.limit) || 50 }), res));
+  handle(clients.review.GetReviews({ animeId: req.params.id, limit: parseInt(req.query.limit) || 50 }), res));
 router.post('/reviews', authMiddleware, (req, res) =>
-  handle(clients.review.CreateReview({ user_id: req.user.id, ...req.body }), res, 201));
+  handle(clients.review.CreateReview({
+    userId: req.user.id,
+    animeId: req.body.anime_id,
+    rating: req.body.rating,
+    body: req.body.body,
+  }), res, 201));
 router.post('/reviews/:id/like', authMiddleware, (req, res) =>
-  handle(clients.review.LikeReview({ review_id: req.params.id, user_id: req.user.id }), res));
+  handle(clients.review.LikeReview({ reviewId: req.params.id, userId: req.user.id }), res));
 router.delete('/reviews/:id', authMiddleware, (req, res) =>
-  handle(clients.review.DeleteReview({ review_id: req.params.id }), res, 204));
+  handle(clients.review.DeleteReview({ reviewId: req.params.id }), res, 204));
 
 // --- Notifications ---
 router.get('/notifications', authMiddleware, (req, res) =>
-  handle(clients.notification.GetNotifications({ user_id: req.user.id, limit: parseInt(req.query.limit) || 50 }), res));
+  handle(clients.notification.GetNotifications({ userId: req.user.id, limit: parseInt(req.query.limit) || 50 }), res));
 router.post('/notifications/:id/read', authMiddleware, (req, res) =>
   handle(clients.notification.MarkAsRead({ id: req.params.id }), res));
 router.delete('/notifications/:id', authMiddleware, (req, res) =>
